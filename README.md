@@ -5,6 +5,7 @@
 
 `DistributedObjects.jl` lets you **create**, **access** and **delete** remotely stored objects.
 
+## Usage
 
 ```julia
 using Distributed; addprocs(5)
