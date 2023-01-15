@@ -39,7 +39,7 @@ localpart(distributed_plants) # returns Plant("peppermint", true)
 remotecall_fetch(localpart, 4, distributed_plants) # returns Plant("hemlock", false)
 remotecall_fetch(localpart, 6, one_distributed_plant) # returns Plant("foxglove", false)
 ```
-Once we're done with our plants we can remove them from their respective process
+Once we're done with our plants we can remove them from their respective processes
 ```julia
 close(distributed_plants)
 close(one_distributed_plant)
