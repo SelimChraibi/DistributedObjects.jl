@@ -49,7 +49,7 @@ another_distributed_plant = DistributedObject{Plant}() # make sure to specify th
 
 ### 2. Access
 
-We can access each plant by passing indexes to the `DistributedObject`s:
+We can access each plant by passing indexes to the `DistributedObject`s
 ```julia
 distributed_plants[] # [] accesses current process (here 1) returns Plant("peppermint", true)
 distributed_plants[1] # returns Plant("peppermint", true)
@@ -84,7 +84,7 @@ where(distributed_plants) # returns [1, 2, 4]
 
 ### 4. Delete
 
-Once we're done with a plant we can remove it from its `DistibutedObject`:
+Once we're done with a plant we can remove it from its `DistibutedObject`
 ```julia
 delete!(distributed_plants, 2)
 
@@ -94,7 +94,7 @@ distributed_plants[2]
 ```
 
 
-Finally, we clean up after ourselves when we're done with the `DistibutedObject`s:
+Finally, we clean up after ourselves when we're done with the `DistibutedObject`s
 
 ```julia
 close(distributed_plants)
@@ -103,7 +103,7 @@ close(another_distributed_plant)
 ```
 
 ---
-**Bonus:** you can check with `varinfo()` that the objects are indeed stored remotely and that they are correctly removed by `close`:
+**Bonus:** you can check with `varinfo()` that the objects are indeed stored remotely and that they are correctly removed by `close`
 
 ```julia
 using Distributed; addprocs(1)
