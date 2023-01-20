@@ -7,7 +7,7 @@
 
 ## Installation
 
-You can install Dagger by typing
+You can install DistributedObjects by typing
 
 ```julia
 julia> ] add DistributedObjects
