@@ -3,7 +3,15 @@
 [![Build Status](https://github.com/Selim78/DistributedObjects.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/Selim78/DistributedObjects.jl/actions/workflows/CI.yml?query=branch%3Amain)
 
 
-`DistributedObjects.jl` lets you **create**, **access**, and **delete** remotely stored objects.
+`DistributedObjects.jl` lets you **create**, **access**, **modify** and **delete** remotely stored objects.
+
+## Installation
+
+You can install Dagger by typing
+
+```julia
+julia> ] add DistributedObjects
+```
 
 ## Usage
 
@@ -38,12 +46,28 @@ and let's create an empty `DistributedObject`
 ```julia
 another_distributed_plant = DistributedObject{Plant}() # make sure to specify the type of the objects it'll receive
 ```
-### 2. Modify and add
+
+### 2. Access
+
+We can access each plant by passing indexes to the `DistributedObject`s:
+```julia
+distributed_plants[] # [] accesses current process (here 1) returns Plant("peppermint", true)
+distributed_plants[1] # returns Plant("peppermint", true)
+distributed_plants[4] # returns Plant("hemlock", false)
+fetch(@spawnat 4 distributed_plants[]) # returns Plant("hemlock", false)
+distributed_plants[1,4] # returns [Plant("peppermint", true), Plant("hemlock", false)]
+one_distributed_plant[6] # returns Plant("foxglove", false)
+```
+
+**Note:** fetching objects from remote processes is possible, but not recommended if you want to avoid the communication overhead.
+
+
+### 3. Modify
 
 Let's add some plants to `another_distributed_plant`
 
 ```julia
-another_distributed_plant[] = ()->Plant("plantain", true) # adds a plant at current process (here 1) 
+another_distributed_plant[] = ()->Plant("plantain", true) # [] adds a plant at current process (here 1) 
 another_distributed_plant[5] = ()->Plant("clover", true)
 another_distributed_plant[2,4] = (pid)->Plant(args[pid]...)
 ```
@@ -58,22 +82,7 @@ eltype(distributed_plants) # returns Plant
 where(distributed_plants) # returns [1, 2, 4]
 ```
 
-### 3. Access and fetch
-
-We can access each plant by passing indexes to the `DistributedObject`s:
-```julia
-distributed_plants[] # returns Plant("peppermint", true)
-distributed_plants[1] # returns Plant("peppermint", true)
-distributed_plants[4] # returns Plant("hemlock", false)
-fetch(@spawnat 4 distributed_plants[]) # returns Plant("hemlock", false)
-distributed_plants[1,4] # returns [Plant("peppermint", true), Plant("hemlock", false)]
-one_distributed_plant[6] # returns Plant("foxglove", false)
-```
-
-**Note:** fetching objects from remote processes is possible, but not recommended if you want to avoid the communication overhead.
-
-
-### 4. Delete and close
+### 4. Delete
 
 Once we're done with a plant we can remove it from its `DistibutedObject`:
 ```julia
