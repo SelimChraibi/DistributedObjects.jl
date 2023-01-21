@@ -96,7 +96,7 @@ delete!(🪴, 2)
 
 🪴[2]
 # ERROR: On worker 2:
-# No localpart on process 2
+# This distributed object has no remote object on process 2.
 ```
 
 
