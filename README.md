@@ -75,7 +75,7 @@ wait `"chanterelles"` isn't a plant...
 ```julia
 🌱[5] = ()->Plant("spearmint", true)
 ```
-If you're working on the current process, or if you don't mind the communication cost, you can pass the objects directly instead of functions
+If you're working on the current process, or if you don't mind the communication cost, you can also pass the objects directly instead of functions
 
 ```julia
 🌱[] = Plant("spinach", true) 
