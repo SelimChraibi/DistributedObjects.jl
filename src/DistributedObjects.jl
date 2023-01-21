@@ -6,7 +6,6 @@ module DistributedObjects
     export DistributedObject, delete!, close, where
 
     const objects = Dict{UUID, Any}()
-    const remote_objects = Vector{}
     
     add_object(uuid::UUID, f::Function) = (objects[uuid] = f(); typeof(objects[uuid]))
     remove_object(uuid::UUID) = delete!(objects, uuid)
