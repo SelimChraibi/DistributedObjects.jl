@@ -5,6 +5,7 @@ using Test
 @testset "DistributedObjects.jl" begin
 
     # Creating a DistributedObjects
+    do0 = DistributedObject{Vector{Int64}}()
     do1 = DistributedObject{Vector{Int64}}()
     do2 = DistributedObject(()->[2,2,2], 2)
     do3 = DistributedObject((pid)->[pid, pid, pid]) # pids = workers()
@@ -16,19 +17,27 @@ using Test
     @test do3[2]==[2,2,2]
     @test fetch(@spawnat 2 do4[1,2]==[[1,1,1],[2,2,2]]) 
 
-    # Adding elements
+    # Adding elements (with functions)
     do1[] = ()->[1,1,1]
     do2[3] = ()->[3,3,3]
     do2[1,4] = (pid)->[pid, pid, pid]
+
+    # Adding elements (without functions)
+    do0[] = [1,1,1]
+    do0[1] = [0,0,0]
+    do0[3] = [3,3,3]
+    do0[2,4] = [[2,2,2], [4,4,4]]
 
     # Check type
     @test eltype(do1) == Vector{Int64}
 
     # Check location
+    @test where(do0) == [1,2,3,4]
     @test where(do1) == [1]
     @test where(do2) == [1,2,3,4]
 
     # Check value
+    @test do0[]==[0,0,0]
     @test do1[]==[1,1,1]
     @test do2[3]==[3,3,3]
     @test fetch(@spawnat 4 do2[4]==[4,4,4])

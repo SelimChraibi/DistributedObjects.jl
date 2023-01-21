@@ -68,12 +68,18 @@ Let's add some plants to `🌱`
 
 ```julia
 🌱[] = ()->Plant("plantain", true) # [] adds a plant at current process (here 1) 
-🌱[5] = ()->Plant("clover", true)
+🌱[5] = ()->Plant("chanterelles", true)
 🌱[2,4] = (pid)->Plant(args[pid]...)
 ```
-wait actually I'd rather have `"spearmint"` at `2`...
+wait `"chanterelles"` isn't a plant...
 ```julia
-🌱[2] = ()->Plant("spearmint", true)
+🌱[5] = ()->Plant("spearmint", true)
+```
+If you're working on the current process, or if you don't mind the communication cost, you can pass the objects directly instead of functions
+
+```julia
+🌱[] = Plant("spinach", true) 
+🌱[3,4] = [Plant("chickweed", true), Plant("nettle", true)]
 ```
 
 Oh, and if you ever forget what type of objects you stored and where you stored them
@@ -117,5 +123,3 @@ big_array = DistributedObject(()->ones(1000,1000), 2);
 close(big_array)
 @everywhere @show varinfo()
 ```
-
-# Title
