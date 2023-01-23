@@ -15,12 +15,21 @@ julia> ] add DistributedObjects
 
 ## Usage
 
-### 1. Create
+Start with your usual [distributed setup](https://github.com/Arpeggeo/julia-distributed-computing) 
 
 ```julia
+# launch multiple processes (or remote machines)
 using Distributed; addprocs(5)
-@everywhere using .DistributedObjects
+
+# instantiate and precompile environment in all processes
+@everywhere using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate(); Pkg.precompile()
+
+# you can now use DistributedObjects
+@everywhere using DistributedObjects
 ```
+
+### 1. Create
+
 Behold, a plant ✨
 ```julia
 @everywhere struct Plant
