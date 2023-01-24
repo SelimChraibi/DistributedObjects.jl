@@ -22,7 +22,7 @@ Start with your usual [distributed setup](https://github.com/Arpeggeo/julia-dist
 using Distributed; addprocs(5)
 
 # instantiate and precompile environment in all processes
-@everywhere using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate(); Pkg.precompile()
+@everywhere (using Pkg; Pkg.activate(@__DIR__); Pkg.instantiate(); Pkg.precompile())
 
 # you can now use DistributedObjects
 @everywhere using DistributedObjects
