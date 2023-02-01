@@ -27,22 +27,22 @@ module DistributedObjects
     """
         DistributedObject{T}() where T
 
-    Create an empty `DistributedObject` which will reference objects of type `T` stored on remote processes.
+    Create an empty `DistributedObject` which will reference objects of type `<:T` stored on remote processes.
     
     For example, `DistributedObject{Int64}()`, will return a distributed object capable of referencing `Int64` objects.
     
         DistributedObject{T}(f::Function; pids=workers()::Vector{Int64})
 
-    Make a reference to objects of type `T` stored on processes `pids`.
-    `f` is a function that when executed on a `pid` in `pids` must return an implementation of an object of type `T`.
+    Make a reference to objects of type `<:T` stored on processes `pids`.
+    `f` is a function that when executed on a `pid` in `pids` must return an implementation of an object of type `<:T`.
     The default `pids` are the worker processes.
     
     For example, `DistributedObject((pid)->pid * ones(2); pids=[2,3])`, will return a distributed object referencing a vector `[2,2]` and `[3,3]` stored on workers 2 and 3 respectively.
     
         DistributedObject{T}(f::Function, pid::Int64)
 
-    Make a reference to an object of type `T` stored on process `pid`.
-    `f` is a function that when executed on `pid` must return an implementation of an object of type `T`.
+    Make a reference to an object of type `<:T` stored on process `pid`.
+    `f` is a function that when executed on `pid` must return an implementation of an object of type `<:T`.
 
     For example, `DistributedObject(()->ones(2), 4)`, will return a distributed object referencing a vector `[1,1]` stored on workers 4.
     """
@@ -52,18 +52,22 @@ module DistributedObjects
         DistributedObject{T}() where T = new(Dict{Int64,UUID}())
         
         function DistributedObject(f::Function; pids=workers()::Vector{Int64})
-            @assert !isempty(pids) "Please make sure worker process have been launched and provide a non empty `pids`"
+            !isempty(pids) || throw(ArgumentError("Please make sure worker process have been launched and provide a non empty `pids`"))
+            hasmethod(f, (Int64,)) || throw(ArgumentError("`f` should take as an argument a `pid::Int64`"))
+
             refs = Dict{Int64,UUID}()
 
             types = Vector{Type}(undef, length(pids))
             @sync for (i,pid) in enumerate(pids)
                 @async refs[pid], types[i] = add_object(()->f(pid), pid; return_type=true)
             end
-            length(types)==1 || @assert all(==(types[1]), types)
-            new{types[1]}(refs)
+            new{Union{types...}}(refs)
         end
 
-        DistributedObject(f::Function, pid::Int64) = DistributedObject((pid)->f(), pids=[pid])
+        function DistributedObject(f::Function, pid::Int64) 
+            hasmethod(f, ()) || throw(ArgumentError("`f` should take no argument"))
+            DistributedObject((pid)->f(), pids=[pid])
+        end
     end
 
     ############################################
@@ -76,7 +80,7 @@ module DistributedObjects
     Retrieve the object stored by the current process.
     """
     function Base.getindex(d::DistributedObject{T}) where T
-        objects[d.refs[myid()]]
+        objects[d.refs[myid()]]::T
     end
 
     """
@@ -86,7 +90,7 @@ module DistributedObjects
     """
     function Base.getindex(d::DistributedObject{T}, pid::Int64) where T
         mypid = myid()
-        pid==mypid ? objects[d.refs[mypid]] : fetch(@spawnat pid objects[d.refs[pid]])
+        pid==mypid ? objects[d.refs[mypid]]::T : fetch(@spawnat pid objects[d.refs[pid]])::T
     end
 
     """
@@ -101,9 +105,9 @@ module DistributedObjects
 
         for (i, pid) in enumerate(pids)
             @assert haskey(d.refs, pid) "This distributed object has no remote object on process $pid."
-            output[i] = d[pid]
+            output[i] = d[pid]::T
         end
-        output
+        output::Vector{T}
     end
 
     ############################################
@@ -119,6 +123,7 @@ module DistributedObjects
         mypid = myid()
         haskey(d.refs, mypid) && delete!(d, mypid)
         d.refs[mypid] = add_object(f)
+        d
     end
 
     """
@@ -129,6 +134,7 @@ module DistributedObjects
     function Base.setindex!(d::DistributedObject{T}, f::Function, pid::Int64) where T        
         haskey(d.refs, pid) && delete!(d, pid)
         d.refs[pid] = add_object(f, pid)
+        d
     end
 
     """
@@ -140,6 +146,7 @@ module DistributedObjects
         for pid in pids
             d[pid] = ()->f(pid)
         end
+        d
     end
 
     """
@@ -149,6 +156,7 @@ module DistributedObjects
     """
     function Base.setindex!(d::DistributedObject{T}, o::T) where T
         d[] = ()->o
+        d
     end
 
     """
@@ -158,6 +166,7 @@ module DistributedObjects
     """
     function Base.setindex!(d::DistributedObject{T}, o::T, pid::Int64) where T        
         d[pid] = ()->o
+        d
     end
 
     """
@@ -168,6 +177,7 @@ module DistributedObjects
     function Base.setindex!(d::DistributedObject{T}, os::Vector{T}, pids::Int64...) where T
         index = Dict{Int64,Int64}(pids .=> 1:length(pids))
         d[pids...] = (pid)->os[index[pid]]
+        d
     end
 
     ############################################

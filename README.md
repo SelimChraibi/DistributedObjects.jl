@@ -50,10 +50,16 @@ args = Dict(1=>("peppermint", true),
 # note that by default pids=workers()
 🪴 = DistributedObject((pid)->Plant(args[pid]...); pids=[1, 2, 4]);
 ```
-And here we initialise an empty `DistributedObject`
+Here we initialise an empty `DistributedObject`
 
 ```julia
 🌱 = DistributedObject{Plant}() # make sure to specify the type of the objects it'll receive
+```
+
+And here's a `DistributedObject` referencing mutilple types
+
+```julia
+🌼1️⃣ = DistributedObject((pid)->(1, Plant("dandelion", true))[pid]; pids=[1,2]) # DistributedObject{Union{Int64, Plant}}
 ```
 
 ### 2. Access

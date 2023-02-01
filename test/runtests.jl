@@ -10,12 +10,14 @@ using Test
     do2 = DistributedObject(()->[2,2,2], 2)
     do3 = DistributedObject((pid)->[pid, pid, pid]) # pids = workers()
     do4 = DistributedObject((pid)->[pid, pid, pid]; pids=[1,2])
+    do5 = DistributedObject((pid)->[[2],true][pid]; pids=[1,2]) # multiple types
 
     # Accessing local and remote elements
     @test fetch(@spawnat 2 do2[]==[2,2,2])
     @test do3[4]==[4,4,4]
     @test do3[2]==[2,2,2]
     @test fetch(@spawnat 2 do4[1,2]==[[1,1,1],[2,2,2]]) 
+    @test eltype(do5) == Union{Vector{Int64}, Bool}
 
     # Adding elements (with functions)
     do1[] = ()->[1,1,1]
