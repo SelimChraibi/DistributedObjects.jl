@@ -56,10 +56,10 @@ Here we initialize an empty `DistributedObject`
 🌱 = DistributedObject{Plant}() # make sure to specify the type of the objects it'll receive
 ```
 
-And here's a `DistributedObject` referencing mutilple types
+And here's a `DistributedObject{Union{Plant, Int64}}` referencing mutilple types
 
 ```julia
-🌼1️⃣ = DistributedObject((pid)->(1, Plant("dandelion", true))[pid]; pids=[1,2]) # DistributedObject{Union{Int64, Plant}}
+🌼1️⃣ = DistributedObject((pid)->(Plant("dandelion", true), 1)[pid]; pids=[1,2])
 ```
 
 Finally, here we specify that we expect multiple types but initialize with only `Int64`s
