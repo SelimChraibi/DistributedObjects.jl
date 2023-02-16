@@ -65,8 +65,8 @@ And here's a `DistributedObject{Union{Plant, Int64}}` referencing mutilple types
 Finally, here we specify that we expect multiple types but initialize with only `Int64`s
 
 ```julia
-🌵2️⃣ = DistributedObject{Union{Int64, Plant}}(()->2, 2) 
-🪷3️⃣ = DistributedObject{Union{Int64, Plant}}((pid)->[42, 24][pid], [2,4]) 
+🌸2️⃣ = DistributedObject{Union{Int64, Plant}}(()->2, 2) 
+🌵3️⃣ = DistributedObject{Union{Int64, Plant}}((pid)->[42, 24][pid], [2,4]) 
 ```
 
 ### 2. Access
@@ -129,8 +129,8 @@ close(🪴)
 close(🍀)
 close(🌱)
 close(🌼1️⃣)
-close(🌵2️⃣) 
-close(🪷3️⃣)
+close(🌸2️⃣) 
+close(🌵3️⃣)
 ```
 
 ---
