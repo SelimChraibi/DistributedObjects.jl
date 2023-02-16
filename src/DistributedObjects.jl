@@ -64,9 +64,21 @@ module DistributedObjects
             new{Union{types...}}(refs)
         end
 
+        function DistributedObject{T}(f::Function; pids=workers()::Vector{Int64}) where T
+            d = DistributedObject{T}()
+            d[pids...] = f
+            d
+        end
+
         function DistributedObject(f::Function, pid::Int64) 
             hasmethod(f, ()) || throw(ArgumentError("`f` should take no argument"))
             DistributedObject((pid)->f(), pids=[pid])
+        end
+
+        function DistributedObject{T}(f::Function, pid::Int64) where T
+            d = DistributedObject{T}()
+            d[pid] = f
+            d
         end
     end
 

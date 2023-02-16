@@ -7,7 +7,7 @@ Ever had trouble keeping track of objects on remote processes? <br>
 
 ## Installation
 
-You can install DistributedObjects by typing
+You can install `DistributedObjects` by typing
 
 ```julia
 julia> ] add DistributedObjects
@@ -50,7 +50,7 @@ args = Dict(1=>("peppermint", true),
 # note that by default pids=workers()
 🪴 = DistributedObject((pid)->Plant(args[pid]...); pids=[1, 2, 4]);
 ```
-Here we initialise an empty `DistributedObject`
+Here we initialize an empty `DistributedObject`
 
 ```julia
 🌱 = DistributedObject{Plant}() # make sure to specify the type of the objects it'll receive
@@ -60,6 +60,13 @@ And here's a `DistributedObject` referencing mutilple types
 
 ```julia
 🌼1️⃣ = DistributedObject((pid)->(1, Plant("dandelion", true))[pid]; pids=[1,2]) # DistributedObject{Union{Int64, Plant}}
+```
+
+Finally, here we specify that we expect multiple types but initialize with only `Int64`s
+
+```julia
+🌵2️⃣ = DistributedObject{Union{Int64, Plant}}(()->2, 2) 
+🪷3️⃣ = DistributedObject{Union{Int64, Plant}}((pid)->[42, 24][pid], [2,4]) 
 ```
 
 ### 2. Access
@@ -121,6 +128,9 @@ Finally, we clean up after ourselves when we're done with the `DistibutedObject`
 close(🪴)
 close(🍀)
 close(🌱)
+close(🌼1️⃣)
+close(🌵2️⃣) 
+close(🪷3️⃣)
 ```
 
 ---

@@ -11,6 +11,8 @@ using Test
     do3 = DistributedObject((pid)->[pid, pid, pid]) # pids = workers()
     do4 = DistributedObject((pid)->[pid, pid, pid]; pids=[1,2])
     do5 = DistributedObject((pid)->[[2],true][pid]; pids=[1,2]) # multiple types
+    do6 = DistributedObject{Union{Nothing, Int64}}(()->nothing, 2) # expecting other types
+    do7 = DistributedObject{Union{Nothing, Int64}}((pid)->nothing; pids=[2,3]) # expecting other types
 
     # Accessing local and remote elements
     @test fetch(@spawnat 2 do2[]==[2,2,2])
@@ -23,6 +25,8 @@ using Test
     do1[] = ()->[1,1,1]
     do2[3] = ()->[3,3,3]
     do2[1,4] = (pid)->[pid, pid, pid]
+    do6[3] = ()->3
+    do6[4] = ()->4
 
     # Adding elements (without functions)
     do0[] = [1,1,1]
