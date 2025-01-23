@@ -1,6 +1,6 @@
 # DistributedObjects
 
-[![Build Status](https://github.com/SelimChraibi/DistributedObjects.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/SelimChraibi/DistributedObjects.jl/actions/workflows/CI.yml?query=branch%3Amain)
+[![Build Status](https://github.com/SelimChraibi/DistributedObjects.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/SelimChraibi/DistributedObjects.jl/actions/workflows/CI.yml?query=branch%3Amain) 
 
 Ever had trouble keeping track of objects on remote processes? <br>
 `DistributedObjects.jl` lets you [**create**](#1-create), [**access**](#2-access), [**modify**](#3-modify) and [**delete**](#4-delete) remotely stored objects.
